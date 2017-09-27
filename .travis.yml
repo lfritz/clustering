@@ -1,0 +1,9 @@
+language: go
+
+before_install:
+        go get github.com/golang/lint/golint
+
+script:
+        - go test -v ./...
+        - golint ./...
+        - go vet ./...
