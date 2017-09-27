@@ -1,38 +1,37 @@
+/*
+Package dbscan implement the DBSCAN (Density-based spatial clustering of applications with noise)
+algorithm.
+
+References:
+
+    https://en.m.wikipedia.org/wiki/DBSCAN
+    http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.121.9220
+
+*/
 package dbscan
 
 import (
-	"math"
 	"github.com/lfritz/clustering"
 )
-
-const (
-	Unclassified = 0
-	Noise = 1
-)
-
-func distance(a, b clustering.Point) float64 {
-	dx := a.X - b.X
-	dy := a.Y - b.Y
-	return math.Sqrt(dx*dx + dy*dy)
-}
 
 func neighbors(points []clustering.Point, p int, eps float64) []int {
 	var result []int
 	for i, point := range points {
-		if distance(points[p], point) < eps {
+		if clustering.Distance(points[p], point) < eps {
 			result = append(result, i)
 		}
 	}
 	return result
 }
 
+// Dbscan applies the DBSCAN algorithm and returns a clustering for points.
 func Dbscan(points []clustering.Point, eps float64, minPts int) []int {
-	clusterId := Noise + 1
+	clusterID := Noise + 1
 	clustering := make([]int, len(points))
 	for p := range points {
 		if clustering[p] == Unclassified {
-			if expandCluster(points, p, clustering, clusterId, eps, minPts) {
-				clusterId++
+			if expandCluster(points, p, clustering, clusterID, eps, minPts) {
+				clusterID++
 			}
 		}
 	}
@@ -54,7 +53,7 @@ func remove(slice []int, element int) []int {
 }
 
 func expandCluster(points []clustering.Point, p int, clustering []int,
-	clusterId int, eps float64, minPts int) bool {
+	clusterID int, eps float64, minPts int) bool {
 	seeds := neighbors(points, p, eps)
 	if len(seeds) < minPts {
 		// not a core point
@@ -63,7 +62,7 @@ func expandCluster(points []clustering.Point, p int, clustering []int,
 	}
 
 	for _, q := range seeds {
-		clustering[q] = clusterId
+		clustering[q] = clusterID
 	}
 	remove(seeds, p)
 
@@ -78,7 +77,7 @@ func expandCluster(points []clustering.Point, p int, clustering []int,
 					if clustering[r] == Unclassified {
 						seeds = append(seeds, r)
 					}
-					clustering[r] = clusterId
+					clustering[r] = clusterID
 				}
 			}
 		}
@@ -86,4 +85,3 @@ func expandCluster(points []clustering.Point, p int, clustering []int,
 
 	return true
 }
-
