@@ -11,13 +11,13 @@ References:
 package dbscan
 
 import (
-	"github.com/lfritz/clustering"
+	"github.com/lfritz/clustering/geometry"
 )
 
-func neighbors(points []clustering.Point, p int, eps float64) []int {
+func neighbors(points [][2]float64, p int, eps float64) []int {
 	var result []int
 	for i, point := range points {
-		if clustering.Distance(points[p], point) < eps {
+		if geometry.Distance(points[p], point) < eps {
 			result = append(result, i)
 		}
 	}
@@ -25,7 +25,7 @@ func neighbors(points []clustering.Point, p int, eps float64) []int {
 }
 
 // Dbscan applies the DBSCAN algorithm and returns a clustering for points.
-func Dbscan(points []clustering.Point, eps float64, minPts int) []int {
+func Dbscan(points [][2]float64, eps float64, minPts int) []int {
 	clusterID := Noise + 1
 	clustering := make([]int, len(points))
 	for p := range points {
@@ -52,7 +52,7 @@ func remove(slice []int, element int) []int {
 	return slice
 }
 
-func expandCluster(points []clustering.Point, p int, clustering []int,
+func expandCluster(points [][2]float64, p int, clustering []int,
 	clusterID int, eps float64, minPts int) bool {
 	seeds := neighbors(points, p, eps)
 	if len(seeds) < minPts {

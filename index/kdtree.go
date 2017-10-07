@@ -1,13 +1,12 @@
 package index
 
 import (
-	"github.com/lfritz/clustering"
 	"sort"
 )
 
 // A KDTree implements the k-d tree data structure (https://en.m.wikipedia.org/wiki/K-d_tree).
 type KDTree struct {
-	points []clustering.Point
+	points [][2]float64
 	node   *node
 }
 
@@ -19,95 +18,83 @@ type node struct {
 }
 
 // NewKDTree returns a new k-d tree.
-func NewKDTree(points []clustering.Point) *KDTree {
+func NewKDTree(points [][2]float64) *KDTree {
 	t := &KDTree{points, nil}
 	indices := make([]int, len(points))
 	for i := range indices {
 		indices[i] = i
 	}
-	t.node = newNode(points, indices, false)
+	t.node = newNode(points, indices, 0)
 	return t
 }
 
-type byX struct {
-	points  []clustering.Point
-	indices []int
+// sortBy implements sort.Interface for sorting a slice of indices to points
+// taking into account only one dimension.
+type byOneDimension struct {
+	points    [][2]float64
+	dimension int // 0 or 1
+	indices   []int
 }
 
-func (a byX) Len() int           { return len(a.indices) }
-func (a byX) Swap(i, j int)      { a.indices[i], a.indices[j] = a.indices[j], a.indices[i] }
-func (a byX) Less(i, j int) bool { return a.points[a.indices[i]].X < a.points[a.indices[j]].X }
-
-type byY struct {
-	points  []clustering.Point
-	indices []int
+func (a *byOneDimension) Len() int      { return len(a.indices) }
+func (a *byOneDimension) Swap(i, j int) { a.indices[i], a.indices[j] = a.indices[j], a.indices[i] }
+func (a *byOneDimension) Less(i, j int) bool {
+	return a.points[a.indices[i]][a.dimension] < a.points[a.indices[j]][a.dimension]
 }
 
-func (a byY) get(i int) clustering.Point { return a.points[a.indices[i]] }
-func (a byY) Len() int                   { return len(a.indices) }
-func (a byY) Swap(i, j int)              { a.indices[i], a.indices[j] = a.indices[j], a.indices[i] }
-func (a byY) Less(i, j int) bool         { return a.points[a.indices[i]].Y < a.points[a.indices[j]].Y }
-
-func newNode(points []clustering.Point, indices []int, xAxis bool) *node {
+func newNode(points [][2]float64, indices []int, level int) *node {
 	// base case: no points left in this area
 	if len(indices) == 0 {
 		return nil
 	}
 
 	// sort points and select median point
-	if xAxis {
-		sort.Sort(byX{points, indices})
-	} else {
-		sort.Sort(byY{points, indices})
-	}
+	sort.Sort(&byOneDimension{points, level % 2, indices})
 	i := len(indices) / 2
-	for i > 0 && points[indices[i]].Equal(points[indices[i-1]]) {
+	for i > 0 && points[indices[i]] == points[indices[i-1]] {
 		i--
 	}
 	p := indices[i]
 
 	// create node and child nodes
 	node := &node{p: p}
-	if xAxis {
-		node.value = points[p].X
-	} else {
-		node.value = points[p].Y
-	}
-	node.left = newNode(points, indices[:i], !xAxis)
-	node.right = newNode(points, indices[i+1:], !xAxis)
+	node.value = points[p][level%2]
+	node.left = newNode(points, indices[:i], level+1)
+	node.right = newNode(points, indices[i+1:], level+1)
 
 	return node
 }
 
 // Points returns the slice of points.
-func (t *KDTree) Points() []clustering.Point {
+func (t *KDTree) Points() [][2]float64 {
 	return t.points
 }
 
 // BoundingBox returns the indices of all points within the given
 // axis-aligned bounding box.
 func (t *KDTree) BoundingBox(x0, x1, y0, y1 float64) []int {
-	return t.node.bb(t.points, x0, x1, y0, y1, false)
+	return t.node.bb(t.points, x0, x1, y0, y1, 0)
 }
 
-func (n *node) bb(points []clustering.Point, x0, x1, y0, y1 float64, xAxis bool) []int {
+func (n *node) bb(points [][2]float64, x0, x1, y0, y1 float64, level int) []int {
 	result := []int{}
 	if n == nil {
 		return result
 	}
 
 	point := points[n.p]
-	if point.X >= x0 && point.X < x1 && point.Y >= y0 && point.Y < y1 {
+	if point[0] >= x0 && point[0] < x1 && point[1] >= y0 && point[1] < y1 {
 		result = append(result, n.p)
 	}
 
+	xAxis := level%2 == 0
 	lookLeft := xAxis && x0 < n.value || !xAxis && y0 < n.value
 	lookRight := xAxis && x1 >= n.value || !xAxis && y1 >= n.value
 	if lookLeft {
-		result = append(result, n.left.bb(points, x0, x1, y0, y1, !xAxis)...)
+		result = append(result, n.left.bb(points, x0, x1, y0, y1, level+1)...)
 	}
 	if lookRight {
-		result = append(result, n.right.bb(points, x0, x1, y0, y1, !xAxis)...)
+		result = append(result, n.right.bb(points, x0, x1, y0, y1, level+1)...)
 	}
 
 	return result
@@ -115,6 +102,6 @@ func (n *node) bb(points []clustering.Point, x0, x1, y0, y1 float64, xAxis bool)
 
 // Circle returns the indices of all points in the circle with the
 // given center and radius.
-func (t *KDTree) Circle(center clustering.Point, radius float64) []int {
+func (t *KDTree) Circle(center [2]float64, radius float64) []int {
 	return circle(t, center, radius)
 }

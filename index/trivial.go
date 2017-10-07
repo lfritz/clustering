@@ -1,22 +1,18 @@
 package index
 
-import (
-	"github.com/lfritz/clustering"
-)
-
 // A TrivialIndex is an implementation of Index that doesn't actually speed up
 // any operations.
 type TrivialIndex struct {
-	points []clustering.Point
+	points [][2]float64
 }
 
 // NewTrivialIndex returns a new TrivialIndex.
-func NewTrivialIndex(points []clustering.Point) *TrivialIndex {
+func NewTrivialIndex(points [][2]float64) *TrivialIndex {
 	return &TrivialIndex{points}
 }
 
 // Points returns the slice of points.
-func (i *TrivialIndex) Points() []clustering.Point {
+func (i *TrivialIndex) Points() [][2]float64 {
 	return i.points
 }
 
@@ -25,7 +21,7 @@ func (i *TrivialIndex) Points() []clustering.Point {
 func (i *TrivialIndex) BoundingBox(x0, x1, y0, y1 float64) []int {
 	result := []int{}
 	for i, p := range i.points {
-		if x0 <= p.X && p.X < x1 && y0 <= p.Y && p.Y < y1 {
+		if x0 <= p[0] && p[0] < x1 && y0 <= p[1] && p[1] < y1 {
 			result = append(result, i)
 		}
 	}
@@ -34,6 +30,6 @@ func (i *TrivialIndex) BoundingBox(x0, x1, y0, y1 float64) []int {
 
 // Circle returns the indices of all points in the circle with the
 // given center and radius.
-func (i *TrivialIndex) Circle(center clustering.Point, radius float64) []int {
+func (i *TrivialIndex) Circle(center [2]float64, radius float64) []int {
 	return circle(i, center, radius)
 }

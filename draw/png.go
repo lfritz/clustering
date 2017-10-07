@@ -2,14 +2,13 @@
 package draw
 
 import (
-	"github.com/lfritz/clustering"
 	"image"
 	"image/color"
 	"image/png"
 	"os"
 )
 
-func toImage(points []clustering.Point, clustering []int) image.Image {
+func toImage(points [][2]float64, clustering []int) image.Image {
 	colors := []color.RGBA{
 		{0x00, 0x00, 0x00, 0xff}, // Unclassified
 		{0xaa, 0xaa, 0xaa, 0xff}, // Noise
@@ -25,8 +24,8 @@ func toImage(points []clustering.Point, clustering []int) image.Image {
 		im.Pix[i] = 0xff
 	}
 	for i, p := range points {
-		x := int(100 * p.X)
-		y := int(100 * (1.0 - p.Y))
+		x := int(100 * p[0])
+		y := int(100 * (1.0 - p[1]))
 		if x < 0 || y < 0 || x >= 100 || y >= 100 {
 			continue
 		}
@@ -50,6 +49,6 @@ func storeImage(image image.Image, path string) {
 }
 
 // ToPNG creates a PNG of the points and writes it to the given path.
-func ToPNG(points []clustering.Point, clustering []int, path string) {
+func ToPNG(points [][2]float64, clustering []int, path string) {
 	storeImage(toImage(points, clustering), path)
 }

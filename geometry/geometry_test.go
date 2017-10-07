@@ -1,4 +1,4 @@
-package clustering
+package geometry
 
 import (
 	"testing"
@@ -6,13 +6,13 @@ import (
 
 func TestDistance(t *testing.T) {
 	cases := []struct {
-		a, b Point
+		a, b [2]float64
 		want float64
 	}{
-		{Point{1, 2}, Point{1, 2}, 0},
-		{Point{1, 2}, Point{3, 2}, 2},
-		{Point{1, 2}, Point{1, 4}, 2},
-		{Point{1, 2}, Point{4, 6}, 5},
+		{[2]float64{1, 2}, [2]float64{1, 2}, 0},
+		{[2]float64{1, 2}, [2]float64{3, 2}, 2},
+		{[2]float64{1, 2}, [2]float64{1, 4}, 2},
+		{[2]float64{1, 2}, [2]float64{4, 6}, 5},
 	}
 	for _, c := range cases {
 		got := Distance(c.a, c.b)

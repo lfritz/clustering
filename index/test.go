@@ -1,22 +1,21 @@
 package index
 
 import (
-	"github.com/lfritz/clustering"
 	"reflect"
 	"sort"
 	"testing"
 )
 
-var points = []clustering.Point{
-	{X: 1, Y: 4},
-	{X: 2, Y: 6},
-	{X: 3, Y: 3},
-	{X: 3, Y: 6},
-	{X: 4, Y: 1},
-	{X: 4, Y: 6},
-	{X: 5, Y: 3},
-	{X: 5, Y: 6},
-	{X: 8, Y: 6},
+var points = [][2]float64{
+	{1, 4},
+	{2, 6},
+	{3, 3},
+	{3, 6},
+	{4, 1},
+	{4, 6},
+	{5, 3},
+	{5, 6},
+	{8, 6},
 }
 
 func testPoints(t *testing.T, i Index) {
@@ -47,13 +46,13 @@ func testBoundingBox(t *testing.T, i Index) {
 
 func testCircle(t *testing.T, i Index) {
 	cases := []struct {
-		center clustering.Point
+		center [2]float64
 		radius float64
 		want   []int
 	}{
-		{clustering.Point{X: 2, Y: 2}, 1, []int{}},
-		{clustering.Point{X: 2, Y: 2}, 2, []int{2}},
-		{clustering.Point{X: 4, Y: 7}, 3, []int{1, 3, 5, 7}},
+		{[2]float64{2, 2}, 1, []int{}},
+		{[2]float64{2, 2}, 2, []int{2}},
+		{[2]float64{4, 7}, 3, []int{1, 3, 5, 7}},
 	}
 	for _, c := range cases {
 		got := i.Circle(c.center, c.radius)

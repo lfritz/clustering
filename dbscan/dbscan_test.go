@@ -1,24 +1,23 @@
 package dbscan
 
 import (
-	"github.com/lfritz/clustering"
 	"reflect"
 	"testing"
 )
 
 func TestNeighbors(t *testing.T) {
-	points := []clustering.Point{
-		{X: 1, Y: 16}, // no neighbors
-		{X: 1, Y: 4},  // one neighbor
-		{X: 1.2, Y: 4.3},
-		{X: 12, Y: 16}, // no neighbors (but one point is very close)
-		{X: 12.9, Y: 16.5},
-		{X: 15, Y: 16}, // five neighbors
-		{X: 14.8, Y: 15.9},
-		{X: 15.2, Y: 15.7},
-		{X: 14.8, Y: 16.5},
-		{X: 15.1, Y: 15.8},
-		{X: 15.4, Y: 16.2},
+	points := [][2]float64{
+		{1, 16}, // no neighbors
+		{1, 4},  // one neighbor
+		{1.2, 4.3},
+		{12, 16}, // no neighbors (but one point is very close)
+		{12.9, 16.5},
+		{15, 16}, // five neighbors
+		{14.8, 15.9},
+		{15.2, 15.7},
+		{14.8, 16.5},
+		{15.1, 15.8},
+		{15.4, 16.2},
 	}
 	cases := []struct {
 		in   int
@@ -56,18 +55,18 @@ func TestRemove(t *testing.T) {
 	}
 }
 
-var points = []clustering.Point{
+var points = [][2]float64{
 	// cluster a: 3 points
-	{X: 1, Y: 8}, {X: 1, Y: 7}, {X: 2, Y: 7},
+	{1, 8}, {1, 7}, {2, 7},
 	// cluster b: 8 points
-	{X: 6, Y: 8}, {X: 7, Y: 8},
-	{X: 5, Y: 7}, {X: 6, Y: 7}, {X: 7, Y: 7}, {X: 8, Y: 7},
-	{X: 6, Y: 6}, {X: 7, Y: 6},
+	{6, 8}, {7, 8},
+	{5, 7}, {6, 7}, {7, 7}, {8, 7},
+	{6, 6}, {7, 6},
 	// cluster c: 8 points
-	{X: 2, Y: 3}, {X: 3, Y: 3}, {X: 1, Y: 2}, {X: 2, Y: 2}, {X: 3, Y: 2}, {X: 2, Y: 1}, {X: 3, Y: 1},
-	{X: 4, Y: 2}, // border point of both c and d
+	{2, 3}, {3, 3}, {1, 2}, {2, 2}, {3, 2}, {2, 1}, {3, 1},
+	{4, 2}, // border point of both c and d
 	// cluster d: 5 points
-	{X: 5, Y: 3}, {X: 5, Y: 2}, {X: 6, Y: 2}, {X: 5, Y: 1},
+	{5, 3}, {5, 2}, {6, 2}, {5, 1},
 }
 
 func TestDbscan(t *testing.T) {
