@@ -51,9 +51,9 @@ func testCircle(t *testing.T, i Index) {
 		radius float64
 		want   []int
 	}{
-		{clustering.Point{2, 2}, 1, []int{}},
-		{clustering.Point{2, 2}, 2, []int{2}},
-		{clustering.Point{4, 7}, 3, []int{1, 3, 5, 7}},
+		{clustering.Point{X: 2, Y: 2}, 1, []int{}},
+		{clustering.Point{X: 2, Y: 2}, 2, []int{2}},
+		{clustering.Point{X: 4, Y: 7}, 3, []int{1, 3, 5, 7}},
 	}
 	for _, c := range cases {
 		got := i.Circle(c.center, c.radius)

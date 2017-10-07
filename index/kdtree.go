@@ -5,6 +5,7 @@ import (
 	"sort"
 )
 
+// A KDTree implements the k-d tree data structure (https://en.m.wikipedia.org/wiki/K-d_tree).
 type KDTree struct {
 	points []clustering.Point
 	node   *node
@@ -17,6 +18,7 @@ type node struct {
 	right *node
 }
 
+// NewKDTree returns a new k-d tree.
 func NewKDTree(points []clustering.Point) *KDTree {
 	t := &KDTree{points, nil}
 	indices := make([]int, len(points))
@@ -77,10 +79,13 @@ func newNode(points []clustering.Point, indices []int, xAxis bool) *node {
 	return node
 }
 
+// Points returns the slice of points.
 func (t *KDTree) Points() []clustering.Point {
 	return t.points
 }
 
+// BoundingBox returns the indices of all points within the given
+// axis-aligned bounding box.
 func (t *KDTree) BoundingBox(x0, x1, y0, y1 float64) []int {
 	return t.node.bb(t.points, x0, x1, y0, y1, false)
 }
@@ -108,6 +113,8 @@ func (n *node) bb(points []clustering.Point, x0, x1, y0, y1 float64, xAxis bool)
 	return result
 }
 
-func (i *KDTree) Circle(center clustering.Point, radius float64) []int {
-	return circle(i, center, radius)
+// Circle returns the indices of all points in the circle with the
+// given center and radius.
+func (t *KDTree) Circle(center clustering.Point, radius float64) []int {
+	return circle(t, center, radius)
 }

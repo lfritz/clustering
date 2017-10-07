@@ -15,10 +15,13 @@ func NewTrivialIndex(points []clustering.Point) *TrivialIndex {
 	return &TrivialIndex{points}
 }
 
+// Points returns the slice of points.
 func (i *TrivialIndex) Points() []clustering.Point {
 	return i.points
 }
 
+// BoundingBox returns the indices of all points within the given
+// axis-aligned bounding box.
 func (i *TrivialIndex) BoundingBox(x0, x1, y0, y1 float64) []int {
 	result := []int{}
 	for i, p := range i.points {
@@ -29,6 +32,8 @@ func (i *TrivialIndex) BoundingBox(x0, x1, y0, y1 float64) []int {
 	return result
 }
 
+// Circle returns the indices of all points in the circle with the
+// given center and radius.
 func (i *TrivialIndex) Circle(center clustering.Point, radius float64) []int {
 	return circle(i, center, radius)
 }

@@ -1,10 +1,11 @@
+// Package index provides spatial indices for 2-D points.
 package index
 
 import (
 	"github.com/lfritz/clustering"
 )
 
-// A spatial index for a slice of points.
+// An Index is a spatial index for a slice of points.
 type Index interface {
 	// Points returns the slice of points.
 	Points() []clustering.Point
