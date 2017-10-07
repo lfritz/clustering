@@ -1,6 +1,7 @@
 package index
 
 import (
+	"github.com/lfritz/clustering/geometry"
 	"reflect"
 	"sort"
 	"testing"
@@ -27,19 +28,21 @@ func testPoints(t *testing.T, i Index) {
 
 func testBoundingBox(t *testing.T, i Index) {
 	cases := []struct {
-		x0, x1, y0, y1 float64
-		want           []int
+		bb   geometry.BoundingBox
+		want []int
 	}{
-		{6, 8, 1, 4, []int{}},
-		{3, 5, 3, 6, []int{2}},
-		{3, 5.1, 3, 6.1, []int{2, 3, 5, 6, 7}},
+		{geometry.BoundingBox{From: [2]float64{6, 1},
+			To: [2]float64{8, 4}}, []int{}},
+		{geometry.BoundingBox{From: [2]float64{3, 3},
+			To: [2]float64{5, 6}}, []int{2}},
+		{geometry.BoundingBox{From: [2]float64{3, 3},
+			To: [2]float64{5.1, 6.1}}, []int{2, 3, 5, 6, 7}},
 	}
 	for _, c := range cases {
-		got := i.BoundingBox(c.x0, c.x1, c.y0, c.y1)
+		got := i.BoundingBox(&c.bb)
 		sort.Ints(got)
 		if !reflect.DeepEqual(got, c.want) {
-			t.Errorf("i.BoundingBox(%v, %v, %v, %v) returned %v, want %v",
-				c.x0, c.x1, c.y0, c.y1, got, c.want)
+			t.Errorf("i.BoundingBox(%v) returned %v, want %v", c.bb, got, c.want)
 		}
 	}
 }

@@ -1,5 +1,9 @@
 package index
 
+import (
+	"github.com/lfritz/clustering/geometry"
+)
+
 // A TrivialIndex is an implementation of Index that doesn't actually speed up
 // any operations.
 type TrivialIndex struct {
@@ -18,10 +22,10 @@ func (i *TrivialIndex) Points() [][2]float64 {
 
 // BoundingBox returns the indices of all points within the given
 // axis-aligned bounding box.
-func (i *TrivialIndex) BoundingBox(x0, x1, y0, y1 float64) []int {
+func (i *TrivialIndex) BoundingBox(bb *geometry.BoundingBox) []int {
 	result := []int{}
 	for i, p := range i.points {
-		if x0 <= p[0] && p[0] < x1 && y0 <= p[1] && p[1] < y1 {
+		if bb.Contains(p) {
 			result = append(result, i)
 		}
 	}

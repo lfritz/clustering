@@ -1,6 +1,7 @@
 package index
 
 import (
+	"github.com/lfritz/clustering/geometry"
 	"sort"
 )
 
@@ -72,29 +73,28 @@ func (t *KDTree) Points() [][2]float64 {
 
 // BoundingBox returns the indices of all points within the given
 // axis-aligned bounding box.
-func (t *KDTree) BoundingBox(x0, x1, y0, y1 float64) []int {
-	return t.node.bb(t.points, x0, x1, y0, y1, 0)
+func (t *KDTree) BoundingBox(bb *geometry.BoundingBox) []int {
+	return t.node.bb(t.points, bb, 0)
 }
 
-func (n *node) bb(points [][2]float64, x0, x1, y0, y1 float64, level int) []int {
+func (n *node) bb(points [][2]float64, bb *geometry.BoundingBox, level int) []int {
 	result := []int{}
 	if n == nil {
 		return result
 	}
 
 	point := points[n.p]
-	if point[0] >= x0 && point[0] < x1 && point[1] >= y0 && point[1] < y1 {
+	if bb.Contains(point) {
 		result = append(result, n.p)
 	}
 
-	xAxis := level%2 == 0
-	lookLeft := xAxis && x0 < n.value || !xAxis && y0 < n.value
-	lookRight := xAxis && x1 >= n.value || !xAxis && y1 >= n.value
+	lookLeft := bb.From[level%2] < n.value
+	lookRight := bb.To[level%2] >= n.value
 	if lookLeft {
-		result = append(result, n.left.bb(points, x0, x1, y0, y1, level+1)...)
+		result = append(result, n.left.bb(points, bb, level+1)...)
 	}
 	if lookRight {
-		result = append(result, n.right.bb(points, x0, x1, y0, y1, level+1)...)
+		result = append(result, n.right.bb(points, bb, level+1)...)
 	}
 
 	return result
