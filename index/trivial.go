@@ -31,9 +31,3 @@ func (i *TrivialIndex) BoundingBox(bb *geometry.BoundingBox) []int {
 	}
 	return result
 }
-
-// Circle returns the indices of all points in the circle with the
-// given center and radius.
-func (i *TrivialIndex) Circle(center [2]float64, radius float64) []int {
-	return circle(i, center, radius)
-}

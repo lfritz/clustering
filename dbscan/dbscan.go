@@ -15,13 +15,13 @@ import (
 )
 
 // Dbscan applies the DBSCAN algorithm and returns a clustering for a set of points.
-func Dbscan(index index.Index, eps float64, minPts int) []int {
+func Dbscan(i index.Index, eps float64, minPts int) []int {
 	clusterID := Noise + 1
-	points := index.Points()
+	points := i.Points()
 	clustering := make([]int, len(points))
 	for p := range points {
 		if clustering[p] == Unclassified {
-			if expandCluster(index, p, clustering, clusterID, eps, minPts) {
+			if expandCluster(i, p, clustering, clusterID, eps, minPts) {
 				clusterID++
 			}
 		}
@@ -43,13 +43,13 @@ func remove(slice []int, element int) []int {
 	return slice
 }
 
-func neighbors(index index.Index, p int, eps float64) []int {
-	return index.Circle(index.Points()[p], eps)
+func neighbors(i index.Index, p int, eps float64) []int {
+	return index.Circle(i, i.Points()[p], eps)
 }
 
-func expandCluster(index index.Index, p int, clustering []int,
+func expandCluster(i index.Index, p int, clustering []int,
 	clusterID int, eps float64, minPts int) bool {
-	seeds := neighbors(index, p, eps)
+	seeds := neighbors(i, p, eps)
 	if len(seeds) < minPts {
 		// not a core point
 		clustering[p] = Noise
@@ -64,7 +64,7 @@ func expandCluster(index index.Index, p int, clustering []int,
 	for len(seeds) > 0 {
 		var q int
 		q, seeds = seeds[0], seeds[1:]
-		qNeighbors := neighbors(index, q, eps)
+		qNeighbors := neighbors(i, q, eps)
 		if len(qNeighbors) >= minPts {
 			// q is a core point
 			for _, r := range qNeighbors {

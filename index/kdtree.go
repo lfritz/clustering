@@ -99,9 +99,3 @@ func (n *node) bb(points [][2]float64, bb *geometry.BoundingBox, level int) []in
 
 	return result
 }
-
-// Circle returns the indices of all points in the circle with the
-// given center and radius.
-func (t *KDTree) Circle(center [2]float64, radius float64) []int {
-	return circle(t, center, radius)
-}

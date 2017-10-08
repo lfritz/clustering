@@ -58,7 +58,7 @@ func testCircle(t *testing.T, i Index) {
 		{[2]float64{4, 7}, 3, []int{1, 3, 5, 7}},
 	}
 	for _, c := range cases {
-		got := i.Circle(c.center, c.radius)
+		got := Circle(i, c.center, c.radius)
 		sort.Ints(got)
 		if !reflect.DeepEqual(got, c.want) {
 			t.Errorf("i.Circle(%v, %v) returned %v, want %v",
