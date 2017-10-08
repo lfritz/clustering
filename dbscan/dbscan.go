@@ -11,26 +11,17 @@ References:
 package dbscan
 
 import (
-	"github.com/lfritz/clustering/geometry"
+	"github.com/lfritz/clustering/index"
 )
 
-func neighbors(points [][2]float64, p int, eps float64) []int {
-	var result []int
-	for i, point := range points {
-		if geometry.Distance(points[p], point) < eps {
-			result = append(result, i)
-		}
-	}
-	return result
-}
-
-// Dbscan applies the DBSCAN algorithm and returns a clustering for points.
-func Dbscan(points [][2]float64, eps float64, minPts int) []int {
+// Dbscan applies the DBSCAN algorithm and returns a clustering for a set of points.
+func Dbscan(index index.Index, eps float64, minPts int) []int {
 	clusterID := Noise + 1
+	points := index.Points()
 	clustering := make([]int, len(points))
 	for p := range points {
 		if clustering[p] == Unclassified {
-			if expandCluster(points, p, clustering, clusterID, eps, minPts) {
+			if expandCluster(index, p, clustering, clusterID, eps, minPts) {
 				clusterID++
 			}
 		}
@@ -52,9 +43,13 @@ func remove(slice []int, element int) []int {
 	return slice
 }
 
-func expandCluster(points [][2]float64, p int, clustering []int,
+func neighbors(index index.Index, p int, eps float64) []int {
+	return index.Circle(index.Points()[p], eps)
+}
+
+func expandCluster(index index.Index, p int, clustering []int,
 	clusterID int, eps float64, minPts int) bool {
-	seeds := neighbors(points, p, eps)
+	seeds := neighbors(index, p, eps)
 	if len(seeds) < minPts {
 		// not a core point
 		clustering[p] = Noise
@@ -69,7 +64,7 @@ func expandCluster(points [][2]float64, p int, clustering []int,
 	for len(seeds) > 0 {
 		var q int
 		q, seeds = seeds[0], seeds[1:]
-		qNeighbors := neighbors(points, q, eps)
+		qNeighbors := neighbors(index, q, eps)
 		if len(qNeighbors) >= minPts {
 			// q is a core point
 			for _, r := range qNeighbors {

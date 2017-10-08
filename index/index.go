@@ -14,6 +14,7 @@ type Index interface {
 	BoundingBox(bb *geometry.BoundingBox) []int
 	// Circle returns the indices of all points in the circle with the
 	// given center and radius.
+	// TODO can we move this out of the interface?
 	Circle(c [2]float64, r float64) []int
 }
 
