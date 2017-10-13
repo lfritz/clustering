@@ -16,9 +16,13 @@ func main() {
 	rand.Norm2D([2]float64{0.5, 0.6}, 0.05, points[100:])
 
 	index := index.NewBasicKDTree(points)
-	clustering := dbscan.Dbscan(index, 0.04, 4)
 
-	svgFile, err := os.Create("example.svg")
+	save(points, dbscan.Dbscan(index, 0.04, 4), "dbscan")
+	save(points, dbscan.Kmeans(points, 3), "kmeans")
+}
+
+func save(points [][2]float64, clustering []int, name string) {
+	svgFile, err := os.Create(fmt.Sprintf("%s.svg", name))
 	if err != nil {
 		fmt.Printf("Error opening file: %v\n", err.Error())
 		return

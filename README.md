@@ -9,4 +9,8 @@ functions to generate and visualize sample data.
 Below is an example of a set of 150 points grouped into three clusters with DBSCAN (the gray points
 were marked as noise):
 
-![example output](example.svg)
+![DBSCAN example output](dbscan.svg)
+
+And the same points clustered with k-means:
+
+![k-means example output](kmeans.svg)
