@@ -44,9 +44,9 @@ var testIndex = index.NewTrivialIndex(testPoints)
 func TestDbscan(t *testing.T) {
 	expectedClustering := []int{
 		Noise, Noise, Noise,
-		2, 2, 2, 2, 2, 2, 2, 2,
-		3, 3, 3, 3, 3, 3, 3,
-		4, 4, 4, 4, 4,
+		0, 0, 0, 0, 0, 0, 0, 0,
+		1, 1, 1, 1, 1, 1, 1,
+		2, 2, 2, 2, 2,
 	}
 	clustering := Dbscan(testIndex, 1.1, 4)
 	if !reflect.DeepEqual(clustering, expectedClustering) {
@@ -58,8 +58,12 @@ func TestDbscan(t *testing.T) {
 func TestExpandCluster(t *testing.T) {
 	// initial clustering: cluster d is marked 2, everything else unclassified
 	initialClustering := make([]int, len(testPoints))
-	for i := 19; i < 23; i++ {
-		initialClustering[i] = 2
+	for i := range initialClustering {
+		if 19 <= i && i < 23 {
+			initialClustering[i] = 0
+		} else {
+			initialClustering[i] = Unclassified
+		}
 	}
 
 	// returns a copy of initialClustering with a range of values changed
@@ -78,16 +82,16 @@ func TestExpandCluster(t *testing.T) {
 		expectedResult     bool
 		expectedClustering []int
 	}{
-		{1, 3, true, changeClustering(0, 3, 3)},
+		{1, 3, true, changeClustering(0, 3, 1)},
 		{1, 4, false, changeClustering(1, 2, Noise)},
-		{6, 4, true, changeClustering(3, 11, 3)},
-		{14, 4, true, changeClustering(11, 19, 3)},
+		{6, 4, true, changeClustering(3, 11, 1)},
+		{14, 4, true, changeClustering(11, 19, 1)},
 	}
 
 	clustering := make([]int, len(initialClustering))
 	for _, c := range cases {
 		copy(clustering, initialClustering)
-		result := expandCluster(testIndex, c.p, clustering, 3, 1.1, c.minPts)
+		result := expandCluster(testIndex, c.p, clustering, 1, 1.1, c.minPts)
 		if !(result == c.expectedResult &&
 			reflect.DeepEqual(clustering, c.expectedClustering)) {
 			t.Errorf("expandCluster(testIndex, %v, clustering, 3, 1.1, %v):\n"+

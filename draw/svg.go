@@ -3,6 +3,7 @@ package draw
 import (
 	"fmt"
 	"github.com/ajstarks/svgo"
+	"github.com/lfritz/clustering/dbscan"
 	"io"
 )
 
@@ -17,14 +18,8 @@ func toInt(points [][2]float64, scale float64) [][2]int {
 	return result
 }
 
-// ToSVG draws points to SVG, with colors indicating clusters.
-func ToSVG(floatPoints [][2]float64, clustering []int, w io.Writer) {
-	const radius = 4
-	const scale = 500
-	const margin = 20
+func color(clusterID int) string {
 	colors := []string{
-		"black", // Unclassified
-		"gray",  // Noise
 		"blue",
 		"red",
 		"forestgreen",
@@ -33,6 +28,21 @@ func ToSVG(floatPoints [][2]float64, clustering []int, w io.Writer) {
 		"darkviolet",
 		"brown",
 	}
+	switch clusterID {
+	case dbscan.Unclassified:
+		return "black"
+	case dbscan.Noise:
+		return "gray"
+	default:
+		return colors[clusterID%len(colors)]
+	}
+}
+
+// ToSVG draws points to SVG, with colors indicating clusters.
+func ToSVG(floatPoints [][2]float64, clustering []int, w io.Writer) {
+	const radius = 4
+	const scale = 500
+	const margin = 20
 
 	points := toInt(floatPoints, scale)
 
@@ -43,10 +53,9 @@ func ToSVG(floatPoints [][2]float64, clustering []int, w io.Writer) {
 	canvas.Rect(0, 0, width, height, "fill:none;stroke:black;stroke-width:4")
 
 	for i, p := range points {
-		color := colors[clustering[i]%len(colors)]
 		x := margin + p[0]
 		y := height - margin - p[1]
-		canvas.Circle(x, y, radius, fmt.Sprintf("fill:%s", color))
+		canvas.Circle(x, y, radius, fmt.Sprintf("fill:%s", color(clustering[i])))
 	}
 
 	canvas.End()

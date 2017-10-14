@@ -16,9 +16,12 @@ import (
 
 // Dbscan applies the DBSCAN algorithm and returns a clustering for a set of points.
 func Dbscan(i index.Index, eps float64, minPts int) []int {
-	clusterID := Noise + 1
+	clusterID := 0
 	points := i.Points()
 	clustering := make([]int, len(points))
+	for i := range clustering {
+		clustering[i] = Unclassified
+	}
 	for p := range points {
 		if clustering[p] == Unclassified {
 			if expandCluster(i, p, clustering, clusterID, eps, minPts) {
