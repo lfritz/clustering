@@ -1,4 +1,4 @@
-package dbscan
+package kmeans
 
 import (
 	"math/rand"
@@ -76,11 +76,11 @@ func TestCentroidsForClusters(t *testing.T) {
 		{1, 1}, {2, 8}, {3, 1}, {3, 3}, {3, 6}, {4, 7}, {7, 5}, {8, 4}, {8, 5}, {9, 3},
 	}
 	k := 3
-	clustering := []int{2, 0, 2, 1, 0, 0, 1, 1, 1, 1}
+	cl := []int{2, 0, 2, 1, 0, 0, 1, 1, 1, 1}
 	want := [][2]float64{{3, 7}, {7, 4}, {2, 1}}
-	got := centroidsForClusters(points, k, clustering)
+	got := centroidsForClusters(points, k, cl)
 	if !reflect.DeepEqual(want, got) {
 		t.Errorf("centroidsForClusters(%v, %v, %v) returned %v, want %v",
-			points, k, clustering, got, want)
+			points, k, cl, got, want)
 	}
 }

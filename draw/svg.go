@@ -1,9 +1,10 @@
+// Package draw provides functions to draw 2-D points as SVG.
 package draw
 
 import (
 	"fmt"
 	"github.com/ajstarks/svgo"
-	"github.com/lfritz/clustering/dbscan"
+	"github.com/lfritz/clustering"
 	"io"
 )
 
@@ -29,9 +30,9 @@ func color(clusterID int) string {
 		"brown",
 	}
 	switch clusterID {
-	case dbscan.Unclassified:
+	case clustering.Unclassified:
 		return "black"
-	case dbscan.Noise:
+	case clustering.Noise:
 		return "gray"
 	default:
 		return colors[clusterID%len(colors)]
@@ -39,7 +40,7 @@ func color(clusterID int) string {
 }
 
 // ToSVG draws points to SVG, with colors indicating clusters.
-func ToSVG(floatPoints [][2]float64, clustering []int, w io.Writer) {
+func ToSVG(floatPoints [][2]float64, cl []int, w io.Writer) {
 	const radius = 4
 	const scale = 500
 	const margin = 20
@@ -55,7 +56,7 @@ func ToSVG(floatPoints [][2]float64, clustering []int, w io.Writer) {
 	for i, p := range points {
 		x := margin + p[0]
 		y := height - margin - p[1]
-		canvas.Circle(x, y, radius, fmt.Sprintf("fill:%s", color(clustering[i])))
+		canvas.Circle(x, y, radius, fmt.Sprintf("fill:%s", color(cl[i])))
 	}
 
 	canvas.End()

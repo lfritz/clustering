@@ -11,6 +11,7 @@ References:
 package dbscan
 
 import (
+	"github.com/lfritz/clustering"
 	"github.com/lfritz/clustering/index"
 )
 
@@ -18,18 +19,18 @@ import (
 func Dbscan(i index.Index, eps float64, minPts int) []int {
 	clusterID := 0
 	points := i.Points()
-	clustering := make([]int, len(points))
-	for i := range clustering {
-		clustering[i] = Unclassified
+	cl := make([]int, len(points))
+	for i := range cl {
+		cl[i] = clustering.Unclassified
 	}
 	for p := range points {
-		if clustering[p] == Unclassified {
-			if expandCluster(i, p, clustering, clusterID, eps, minPts) {
+		if cl[p] == clustering.Unclassified {
+			if expandCluster(i, p, cl, clusterID, eps, minPts) {
 				clusterID++
 			}
 		}
 	}
-	return clustering
+	return cl
 }
 
 func remove(slice []int, element int) []int {
@@ -50,17 +51,16 @@ func neighbors(i index.Index, p int, eps float64) []int {
 	return index.Circle(i, i.Points()[p], eps)
 }
 
-func expandCluster(i index.Index, p int, clustering []int,
-	clusterID int, eps float64, minPts int) bool {
+func expandCluster(i index.Index, p int, cl []int, clusterID int, eps float64, minPts int) bool {
 	seeds := neighbors(i, p, eps)
 	if len(seeds) < minPts {
 		// not a core point
-		clustering[p] = Noise
+		cl[p] = clustering.Noise
 		return false
 	}
 
 	for _, q := range seeds {
-		clustering[q] = clusterID
+		cl[q] = clusterID
 	}
 	remove(seeds, p)
 
@@ -71,11 +71,12 @@ func expandCluster(i index.Index, p int, clustering []int,
 		if len(qNeighbors) >= minPts {
 			// q is a core point
 			for _, r := range qNeighbors {
-				if clustering[r] == Unclassified || clustering[r] == Noise {
-					if clustering[r] == Unclassified {
+				if cl[r] == clustering.Unclassified ||
+					cl[r] == clustering.Noise {
+					if cl[r] == clustering.Unclassified {
 						seeds = append(seeds, r)
 					}
-					clustering[r] = clusterID
+					cl[r] = clusterID
 				}
 			}
 		}

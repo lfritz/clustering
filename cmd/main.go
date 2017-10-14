@@ -5,6 +5,7 @@ import (
 	"github.com/lfritz/clustering/dbscan"
 	"github.com/lfritz/clustering/draw"
 	"github.com/lfritz/clustering/index"
+	"github.com/lfritz/clustering/kmeans"
 	"github.com/lfritz/clustering/rand"
 	"os"
 )
@@ -18,7 +19,7 @@ func main() {
 	index := index.NewBasicKDTree(points)
 
 	save(points, dbscan.Dbscan(index, 0.04, 4), "dbscan")
-	save(points, dbscan.Kmeans(points, 3), "kmeans")
+	save(points, kmeans.Kmeans(points, 3), "kmeans")
 }
 
 func save(points [][2]float64, clustering []int, name string) {

@@ -1,4 +1,5 @@
-package dbscan
+// Package clustering provides implementations of clustering algorithms for 2-D points.
+package clustering
 
 // Pre-defined cluster IDs. IDs for actual clusters start at 0.
 const (
