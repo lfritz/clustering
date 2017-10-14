@@ -7,7 +7,7 @@ import (
 	"reflect"
 )
 
-// Kmeans implements the k-mean clustering algorithm
+// Kmeans implements the k-means clustering algorithm
 // (https://en.m.wikipedia.org/wiki/K-means_clustering).
 func Kmeans(points [][2]float64, k int) []int {
 	centroids := initialCentroids(points, k)
@@ -52,7 +52,7 @@ func randK(k, n int) []int {
 	return result
 }
 
-// initialCentroids generates an initial set of centroids for the k-mean algorithm using the Forgy
+// initialCentroids generates an initial set of centroids for the k-means algorithm using the Forgy
 // method.
 func initialCentroids(points [][2]float64, k int) [][2]float64 {
 	centroids := make([][2]float64, k)
