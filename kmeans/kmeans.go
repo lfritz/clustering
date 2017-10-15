@@ -68,11 +68,11 @@ func initialCentroids(points [][2]float64, k int) [][2]float64 {
 
 func closest(ps [][2]float64, q [2]float64) int {
 	closest := 0
-	minimumDistance := math.Inf(+1)
+	minimum := math.Inf(+1)
 	for i, p := range ps {
-		distance := geometry.Distance(p, q)
-		if distance < minimumDistance {
-			minimumDistance = distance
+		val := geometry.DistanceSquared(p, q)
+		if val < minimum {
+			minimum = val
 			closest = i
 		}
 	}

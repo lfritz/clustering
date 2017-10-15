@@ -24,8 +24,9 @@ func Circle(i Index, c [2]float64, r float64) []int {
 	inBB := i.BoundingBox(&bb)
 	points := i.Points()
 	result := []int{}
+	rSquared := r * r
 	for _, p := range inBB {
-		if geometry.Distance(c, points[p]) <= r {
+		if geometry.DistanceSquared(c, points[p]) <= rSquared {
 			result = append(result, p)
 		}
 	}
