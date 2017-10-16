@@ -1,5 +1,5 @@
-// Package rand implements functions that generate random distributions of points.
-package rand
+// Package random implements functions that generate random distributions of points.
+package random
 
 import (
 	"math/rand"

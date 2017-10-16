@@ -7,9 +7,9 @@ package kmeans
 
 import (
 	"github.com/lfritz/clustering/geometry"
-	"github.com/lfritz/clustering/rand"
+	"github.com/lfritz/clustering/random"
 	"math"
-	stdRand "math/rand"
+	"math/rand"
 	"reflect"
 )
 
@@ -39,7 +39,7 @@ func Kmeans(points [][2]float64, k int) []int {
 func randK(k, n int) []int {
 	result := make([]int, k)
 	for i := range result {
-		x := stdRand.Intn(n - i)
+		x := rand.Intn(n - i)
 		done := false
 		for j, other := range result[:i] {
 			if other > x {
@@ -73,7 +73,7 @@ func initPlusPlus(points [][2]float64, k int) [][2]float64 {
 	centroids := make([][2]float64, 0, n)
 
 	// choose the first centroid randomly from points
-	centroids = append(centroids, points[stdRand.Intn(n)])
+	centroids = append(centroids, points[rand.Intn(n)])
 
 	// for the remaining k-1 centroids, use a weighted probability distribution
 	weights := make([]float64, len(points))
@@ -82,7 +82,7 @@ func initPlusPlus(points [][2]float64, k int) [][2]float64 {
 		for j, p := range points {
 			weights[j] = geometry.DistanceSquared(p, centroids[closest(centroids, p)])
 		}
-		centroids = append(centroids, points[rand.ChooseWeighted(weights)])
+		centroids = append(centroids, points[random.ChooseWeighted(weights)])
 	}
 
 	return centroids

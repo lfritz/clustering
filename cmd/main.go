@@ -6,15 +6,15 @@ import (
 	"github.com/lfritz/clustering/draw"
 	"github.com/lfritz/clustering/index"
 	"github.com/lfritz/clustering/kmeans"
-	"github.com/lfritz/clustering/rand"
+	"github.com/lfritz/clustering/random"
 	"os"
 )
 
 func main() {
 	points := make([][2]float64, 150)
-	rand.Norm2D([2]float64{0.2, 0.2}, 0.05, points[:50])
-	rand.Norm2D([2]float64{0.8, 0.5}, 0.05, points[50:100])
-	rand.Norm2D([2]float64{0.5, 0.6}, 0.05, points[100:])
+	random.Norm2D([2]float64{0.2, 0.2}, 0.05, points[:50])
+	random.Norm2D([2]float64{0.8, 0.5}, 0.05, points[50:100])
+	random.Norm2D([2]float64{0.5, 0.6}, 0.05, points[100:])
 
 	index := index.NewBasicKDTree(points)
 

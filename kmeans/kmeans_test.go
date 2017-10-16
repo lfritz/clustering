@@ -34,7 +34,7 @@ var kmeansTestPoints = [][2]float64{
 	{8, 5}, {8, 7}, {9, 6}, {9, 7},
 }
 
-type initFunction = func(points [][2]float64, k int) [][2]float64
+type initFunction func(points [][2]float64, k int) [][2]float64
 
 func testInitFunction(t *testing.T, f initFunction, name string) {
 	k := 3
