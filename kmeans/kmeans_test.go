@@ -73,7 +73,7 @@ func TestClusteringForCentroids(t *testing.T) {
 		{[][2]float64{{1, 4}, {2, 4}, {3, 4}}, []int{0, 0, 1, 1, 2, 2, 2, 2, 2, 2}},
 	}
 	for _, c := range cases {
-		got := clusteringForCentroids(kmeansTestPoints, c.centroids)
+		got, _ := clusteringForCentroids(kmeansTestPoints, c.centroids)
 		if !reflect.DeepEqual(c.want, got) {
 			t.Errorf("clusteringForCentroids(%v, %v) returned %v, want %v",
 				kmeansTestPoints, c.centroids, got, c.want)

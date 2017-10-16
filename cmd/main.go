@@ -18,8 +18,11 @@ func main() {
 
 	index := index.NewBasicKDTree(points)
 
-	save(points, dbscan.Dbscan(index, 0.04, 4), "dbscan")
-	save(points, kmeans.Kmeans(points, 3), "kmeans")
+	dbscanClustering := dbscan.Dbscan(index, 0.04, 4)
+	kmeansClustering, _ := kmeans.Kmeans(points, 3)
+
+	save(points, dbscanClustering, "dbscan")
+	save(points, kmeansClustering, "kmeans")
 }
 
 func save(points [][2]float64, clustering []int, name string) {

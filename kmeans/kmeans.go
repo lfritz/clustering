@@ -13,22 +13,24 @@ import (
 	"reflect"
 )
 
-// Kmeans applies the k-means algorithm and returns a clustering that groups points into k clusters.
-// It uses the Forgy method to initialize the clusters, i.e. it randomly chooses k observations from
-// the data set.
-func Kmeans(points [][2]float64, k int) []int {
+// Kmeans applies the k-means algorithm and returns a clustering that groups points into k clusters,
+// along with the variance of the clustering. It uses the Forgy method to initialize the clusters,
+// i.e. it randomly chooses k observations from the data set.
+func Kmeans(points [][2]float64, k int) ([]int, float64) {
 	centroids := initPlusPlus(points, k)
 	var cl []int
+	var variance float64
 	for {
-		nextClustering := clusteringForCentroids(points, centroids)
+		nextClustering, nextVariance := clusteringForCentroids(points, centroids)
 		if reflect.DeepEqual(nextClustering, cl) {
 			break
 		}
 		cl = nextClustering
+		variance = nextVariance
 		centroids = centroidsForClusters(points, k, cl)
 
 	}
-	return cl
+	return cl, variance
 }
 
 // TODO:
@@ -80,7 +82,7 @@ func initPlusPlus(points [][2]float64, k int) [][2]float64 {
 	for i := 1; i < k; i++ {
 		// for each point, compute its squared distance from the closest centroid
 		for j, p := range points {
-			weights[j] = geometry.DistanceSquared(p, centroids[closest(centroids, p)])
+			_, weights[j] = closest(centroids, p)
 		}
 		centroids = append(centroids, points[random.ChooseWeighted(weights)])
 	}
@@ -88,7 +90,7 @@ func initPlusPlus(points [][2]float64, k int) [][2]float64 {
 	return centroids
 }
 
-func closest(ps [][2]float64, q [2]float64) int {
+func closest(ps [][2]float64, q [2]float64) (int, float64) {
 	closest := 0
 	minimum := math.Inf(+1)
 	for i, p := range ps {
@@ -98,17 +100,20 @@ func closest(ps [][2]float64, q [2]float64) int {
 			closest = i
 		}
 	}
-	return closest
+	return closest, minimum
 }
 
 // clusteringForCentroids takes a set of points and a set of centroids and returns a clustering that
-// assigns each point to the closest centroid.
-func clusteringForCentroids(points [][2]float64, centroids [][2]float64) []int {
+// assigns each point to the closest centroid, along with its variance.
+func clusteringForCentroids(points [][2]float64, centroids [][2]float64) ([]int, float64) {
 	cl := make([]int, len(points))
+	variance := 0.0
+	var v float64
 	for i, p := range points {
-		cl[i] = closest(centroids, p)
+		cl[i], v = closest(centroids, p)
+		variance += v
 	}
-	return cl
+	return cl, variance
 }
 
 // centroidsForClusters calculates a centroid for each cluster as the mean of its points.
