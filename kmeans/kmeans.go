@@ -7,8 +7,9 @@ package kmeans
 
 import (
 	"github.com/lfritz/clustering/geometry"
+	"github.com/lfritz/clustering/rand"
 	"math"
-	"math/rand"
+	stdRand "math/rand"
 	"reflect"
 )
 
@@ -16,7 +17,7 @@ import (
 // It uses the Forgy method to initialize the clusters, i.e. it randomly chooses k observations from
 // the data set.
 func Kmeans(points [][2]float64, k int) []int {
-	centroids := initialCentroids(points, k)
+	centroids := initPlusPlus(points, k)
 	var cl []int
 	for {
 		nextClustering := clusteringForCentroids(points, centroids)
@@ -31,14 +32,14 @@ func Kmeans(points [][2]float64, k int) []int {
 }
 
 // TODO:
-// - try k-means++
+// - compare the two initialization methods
 // - try running k-means repeatedly
 
 // randK randomly selects k numbers in [0..n), without duplicates.
 func randK(k, n int) []int {
 	result := make([]int, k)
 	for i := range result {
-		x := rand.Intn(n - i)
+		x := stdRand.Intn(n - i)
 		done := false
 		for j, other := range result[:i] {
 			if other > x {
@@ -56,13 +57,34 @@ func randK(k, n int) []int {
 	return result
 }
 
-// initialCentroids generates an initial set of centroids for the k-means algorithm using the Forgy
-// method.
-func initialCentroids(points [][2]float64, k int) [][2]float64 {
+// initForgy generates an initial set of centroids for the k-means algorithm using the Forgy method.
+func initForgy(points [][2]float64, k int) [][2]float64 {
 	centroids := make([][2]float64, k)
 	for i, x := range randK(k, len(points)) {
 		centroids[i] = points[x]
 	}
+	return centroids
+}
+
+// initPlusPlus generates an initial set of centroids for the k-means algorithm following the
+// k-means++ algorithm.
+func initPlusPlus(points [][2]float64, k int) [][2]float64 {
+	n := len(points)
+	centroids := make([][2]float64, 0, n)
+
+	// choose the first centroid randomly from points
+	centroids = append(centroids, points[stdRand.Intn(n)])
+
+	// for the remaining k-1 centroids, use a weighted probability distribution
+	weights := make([]float64, len(points))
+	for i := 1; i < k; i++ {
+		// for each point, compute its squared distance from the closest centroid
+		for j, p := range points {
+			weights[j] = geometry.DistanceSquared(p, centroids[closest(centroids, p)])
+		}
+		centroids = append(centroids, points[rand.ChooseWeighted(weights)])
+	}
+
 	return centroids
 }
 

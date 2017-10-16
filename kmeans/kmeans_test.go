@@ -34,9 +34,11 @@ var kmeansTestPoints = [][2]float64{
 	{8, 5}, {8, 7}, {9, 6}, {9, 7},
 }
 
-func TestInitialCentroids(t *testing.T) {
+type initFunction = func(points [][2]float64, k int) [][2]float64
+
+func testInitFunction(t *testing.T, f initFunction, name string) {
 	k := 3
-	got := initialCentroids(kmeansTestPoints, k)
+	got := f(kmeansTestPoints, k)
 	ok := true
 	if len(got) != k {
 		ok = false
@@ -49,8 +51,16 @@ func TestInitialCentroids(t *testing.T) {
 		}
 	}
 	if !ok {
-		t.Errorf("initialCentroids(%v, %v) returned %v", kmeansTestPoints, k, got)
+		t.Errorf("%s(%v, %v) returned %v", name, kmeansTestPoints, k, got)
 	}
+}
+
+func TestInitForgy(t *testing.T) {
+	testInitFunction(t, initForgy, "initForgy")
+}
+
+func TestInitPlusPlus(t *testing.T) {
+	testInitFunction(t, initPlusPlus, "initPlusPlus")
 }
 
 func TestClusteringForCentroids(t *testing.T) {
