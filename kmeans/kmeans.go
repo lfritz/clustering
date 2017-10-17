@@ -1,8 +1,10 @@
-// Package kmeans implements the k-means clustering algorithm.
+// Package kmeans implements the k-means clustering algorithm, with the k-means++ algorithm for
+// choosing initial values.
 //
 // References:
 //
 //     https://en.m.wikipedia.org/wiki/K-means_clustering
+//     https://en.m.wikipedia.org/wiki/K-means++
 package kmeans
 
 import (
@@ -14,8 +16,7 @@ import (
 )
 
 // Kmeans applies the k-means algorithm and returns a clustering that groups points into k clusters,
-// along with the variance of the clustering. It uses the Forgy method to initialize the clusters,
-// i.e. it randomly chooses k observations from the data set.
+// along with the variance of the clustering.
 func Kmeans(points [][2]float64, k int) ([]int, float64) {
 	centroids := initPlusPlus(points, k)
 	var cl []int
@@ -34,7 +35,6 @@ func Kmeans(points [][2]float64, k int) ([]int, float64) {
 }
 
 // TODO:
-// - compare the two initialization methods
 // - try running k-means repeatedly
 
 // randK randomly selects k numbers in [0..n), without duplicates.
@@ -57,15 +57,6 @@ func randK(k, n int) []int {
 		}
 	}
 	return result
-}
-
-// initForgy generates an initial set of centroids for the k-means algorithm using the Forgy method.
-func initForgy(points [][2]float64, k int) [][2]float64 {
-	centroids := make([][2]float64, k)
-	for i, x := range randK(k, len(points)) {
-		centroids[i] = points[x]
-	}
-	return centroids
 }
 
 // initPlusPlus generates an initial set of centroids for the k-means algorithm following the
