@@ -9,7 +9,6 @@ package kmeans
 
 import (
 	"github.com/lfritz/clustering/geometry"
-	"github.com/lfritz/clustering/random"
 	"math"
 	"math/rand"
 	"reflect"
@@ -59,6 +58,31 @@ func randK(k, n int) []int {
 	return result
 }
 
+// chooseWeighted returns a pseudo-random int in 0..len(weights), chosen with probability
+// proportional to the given weights. The elements of weights must be non-negative numbers and its
+// sum must be positive.
+func chooseWeighted(weights []float64) int {
+	return chooseWeightedFor(weights, rand.Float64())
+}
+
+// chooseWeightedFor implements the non-random part of chooseWeighted, so it can be unit-tested.
+func chooseWeightedFor(weights []float64, r float64) int {
+	sum := 0.0
+	for _, w := range weights {
+		sum += w
+	}
+	r *= sum
+
+	sum = 0
+	for i, w := range weights {
+		sum += w
+		if r < sum {
+			return i
+		}
+	}
+	return len(weights) - 1
+}
+
 // initPlusPlus generates an initial set of centroids for the k-means algorithm following the
 // k-means++ algorithm.
 func initPlusPlus(points [][2]float64, k int) [][2]float64 {
@@ -75,7 +99,7 @@ func initPlusPlus(points [][2]float64, k int) [][2]float64 {
 		for j, p := range points {
 			_, weights[j] = closest(centroids, p)
 		}
-		centroids = append(centroids, points[random.ChooseWeighted(weights)])
+		centroids = append(centroids, points[chooseWeighted(weights)])
 	}
 
 	return centroids

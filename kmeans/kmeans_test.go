@@ -34,6 +34,27 @@ var kmeansTestPoints = [][2]float64{
 	{8, 5}, {8, 7}, {9, 6}, {9, 7},
 }
 
+func TestChooseWeightedFor(t *testing.T) {
+	weights := []float64{20, 30, 5, 10, 35}
+	cases := []struct {
+		r    float64
+		want int
+	}{
+		{.51, 2},
+		{.30, 1},
+		{.90, 4},
+		{.55, 3},
+		{.00, 0},
+	}
+	for _, c := range cases {
+		got := chooseWeightedFor(weights, c.r)
+		if got != c.want {
+			t.Errorf("chooseWeightedFor(%v, %v) returned %v, want %v",
+				weights, c.r, got, c.want)
+		}
+	}
+}
+
 func TestInitPlusPlus(t *testing.T) {
 	k := 3
 	got := initPlusPlus(kmeansTestPoints, k)
