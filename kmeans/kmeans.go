@@ -14,6 +14,21 @@ import (
 	"reflect"
 )
 
+// Repeat applies the k-means algorithm multiple times and returns the best result, i.e. the
+// clustering with the lowest variance.
+func Repeat(points [][2]float64, k int, repetitions int) ([]int, float64) {
+	var bestCl []int
+	lowestVariance := math.Inf(+1)
+	for i := 0; i < repetitions; i++ {
+		cl, variance := Kmeans(points, k)
+		if variance < lowestVariance {
+			bestCl = cl
+			lowestVariance = variance
+		}
+	}
+	return bestCl, lowestVariance
+}
+
 // Kmeans applies the k-means algorithm and returns a clustering that groups points into k clusters,
 // along with the variance of the clustering.
 func Kmeans(points [][2]float64, k int) ([]int, float64) {
@@ -32,9 +47,6 @@ func Kmeans(points [][2]float64, k int) ([]int, float64) {
 	}
 	return cl, variance
 }
-
-// TODO:
-// - try running k-means repeatedly
 
 // randK randomly selects k numbers in [0..n), without duplicates.
 func randK(k, n int) []int {

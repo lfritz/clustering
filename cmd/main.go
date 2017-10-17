@@ -19,7 +19,7 @@ func main() {
 	index := index.NewBasicKDTree(points)
 
 	dbscanClustering := dbscan.Dbscan(index, 0.04, 4)
-	kmeansClustering, _ := kmeans.Kmeans(points, 3)
+	kmeansClustering, _ := kmeans.Repeat(points, 3, 3)
 
 	save(points, dbscanClustering, "dbscan")
 	save(points, kmeansClustering, "kmeans")
