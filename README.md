@@ -2,15 +2,31 @@
 
 [![Build Status](https://travis-ci.org/lfritz/clustering.svg?branch=master)](https://travis-ci.org/lfritz/clustering)
 
-Implementations in Go of the [DBSCAN](https://en.m.wikipedia.org/wiki/DBSCAN) clustering algorithm
-for 2-D points, the [k-d tree](https://en.m.wikipedia.org/wiki/K-d_tree) spatial index and some
-functions to generate and visualize sample data.
+Implementation in Go of the [DBSCAN](https://en.m.wikipedia.org/wiki/DBSCAN) and
+[k-means](https://en.m.wikipedia.org/wiki/K-means_clustering) clustering algorithms, the [k-d
+tree](https://en.m.wikipedia.org/wiki/K-d_tree) spatial index and some functions to generate and
+visualize sample data.
 
-Below is an example of a set of 150 points grouped into three clusters with DBSCAN (the gray points
-were marked as noise):
 
-![DBSCAN example output](dbscan.svg)
+## Example Output
 
-And the same points clustered with k-means:
+Below are two examples that show the algorithms in action. In the output, clusters are indicated by
+colors; points shown in gray were marked as noise.
 
-![k-means example output](kmeans.svg)
+The first example is 150 points clustered by k-means:
+
+![k-means example output](example-1-kmeans.svg)
+
+and DBSCAN:
+
+![DBSCAN example output](example-1-dbscan.svg)
+
+The second example includes a cluster of points distributed in a non-convex shape. K-means can't
+recognize it correctly:
+
+![DBSCAN example output](example-2-dbscan.svg)
+
+but DBSCAN can:
+
+![k-means example output](example-2-kmeans.svg)
+
