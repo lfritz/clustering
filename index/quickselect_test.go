@@ -76,7 +76,7 @@ func sameElements(slice1, slice2 []int) bool {
 	return reflect.DeepEqual(sorted1, sorted2)
 }
 
-func TestQuickselect(t *testing.T) {
+func TestQuickSelect(t *testing.T) {
 	cases := []struct {
 		input []int
 		k     int
@@ -94,7 +94,7 @@ func TestQuickselect(t *testing.T) {
 			lessOrEqual(output[:c.k], output[c.k]) &&
 			greaterOrEqual(output[c.k:], output[c.k])
 		if !ok {
-			t.Errorf("Quickselect(%v, %v) produced %v", c.input, c.k, output)
+			t.Errorf("QuickSelect(%v, %v) produced %v", c.input, c.k, output)
 		}
 	}
 }

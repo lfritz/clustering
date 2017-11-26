@@ -18,7 +18,7 @@ func partition(data sort.Interface, left, right, pivot int) int {
 	return storeIndex
 }
 
-// QuickSelect finds the kth smalles element in an unordered slice. It re-arranges the elements of
+// QuickSelect finds the kth smallest element in an unordered slice. It re-arranges the elements of
 // data so that data[k] is the element that would be at position k if data were sorted, data[i] <=
 // data[k] for i < k, and data[i] >= data[k] for i > k.
 //
