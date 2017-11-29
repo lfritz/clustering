@@ -19,7 +19,7 @@ func Point(n int, p [2]float64, stdDev float64) [][2]float64 {
 
 // CircularArc generates points along a circular arc, i.e. part of a circle. The center and radius
 // arguments specify the circle; from and to are angles in radians that specify what part of the
-// circule to include.
+// circle to include.
 func CircularArc(n int, center [2]float64, radius, from, to float64, stdDev float64) [][2]float64 {
 	output := make([][2]float64, n)
 	d := to - from
