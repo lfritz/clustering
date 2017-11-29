@@ -30,3 +30,13 @@ func CircularArc(n int, center [2]float64, radius, from, to float64, stdDev floa
 	}
 	return output
 }
+
+// Square generates points that are uniformly distributed in a square.
+func Square(n int, lowerLeftCorner [2]float64, l float64) [][2]float64 {
+	output := make([][2]float64, n)
+	for i := range output {
+		output[i][0] = lowerLeftCorner[0] + l*rand.Float64()
+		output[i][1] = lowerLeftCorner[1] + l*rand.Float64()
+	}
+	return output
+}
