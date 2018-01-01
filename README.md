@@ -1,6 +1,6 @@
 # clustering
 
-[![Build Status](https://travis-ci.org/lfritz/clustering.svg?branch=master)](https://travis-ci.org/lfritz/clustering)
+[![Build Status](https://travis-ci.org/lfritz/clustering.svg?branch=master)](https://travis-ci.org/lfritz/clustering) [![Go Report Card](https://goreportcard.com/badge/github.com/lfritz/clustering)](https://goreportcard.com/report/github.com/lfritz/clustering)
 
 Go implementations of the [DBSCAN](https://en.m.wikipedia.org/wiki/DBSCAN) and
 [k-means](https://en.m.wikipedia.org/wiki/K-means_clustering) clustering algorithms, the [k-d
